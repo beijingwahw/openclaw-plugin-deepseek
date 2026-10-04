@@ -1,0 +1,222 @@
+{
+  "id": "openclaw-deepseek",
+  "name": "OpenClaw DeepSeek",
+  "description": "DeepSeek native harness + universal speculative cascade + live cross-provider cost dashboard with credits/balance tracking",
+  "version": "1.7.0",
+  "providers": [
+    "openclaw-deepseek",
+    "openclaw-deepseek-anthropic"
+  ],
+  "modelSupport": {
+    "modelPrefixes": [
+      "openclaw-deepseek/",
+      "openclaw-deepseek-anthropic/"
+    ]
+  },
+  "autoEnableWhenConfiguredProviders": [
+    "deepseek",
+    "openclaw-deepseek"
+  ],
+  "setup": {
+    "providers": [
+      {
+        "id": "openclaw-deepseek",
+        "envVars": [
+          "DEEPSEEK_API_KEY"
+        ]
+      },
+      {
+        "id": "openclaw-deepseek-anthropic",
+        "envVars": [
+          "DEEPSEEK_API_KEY"
+        ]
+      }
+    ]
+  },
+  "providerAuthAliases": {
+    "openclaw-deepseek": "deepseek",
+    "openclaw-deepseek-anthropic": "deepseek"
+  },
+  "providerAuthChoices": [
+    {
+      "provider": "openclaw-deepseek",
+      "method": "api-key",
+      "choiceId": "openclaw-deepseek-api-key",
+      "choiceLabel": "DeepSeek API key (native harness)",
+      "groupId": "openclaw-deepseek",
+      "groupLabel": "DeepSeek",
+      "cliFlag": "--openclaw-deepseek-api-key",
+      "cliOption": "--openclaw-deepseek-api-key <key>",
+      "cliDescription": "DeepSeek API key for the openclaw-deepseek plugin",
+      "onboardingScopes": [
+        "text-inference"
+      ]
+    }
+  ],
+  "activation": {
+    "onStartup": false,
+    "onProviders": [
+      "openclaw-deepseek",
+      "openclaw-deepseek-anthropic"
+    ],
+    "onAgentHarnesses": [
+      "openclaw-deepseek"
+    ],
+    "onCapabilities": [
+      "provider",
+      "tool"
+    ]
+  },
+  "contracts": {
+    "tools": [
+      "deepseek_research",
+      "deepseek_reason",
+      "deepseek_balance",
+      "deepseek_cascade",
+      "deepseek_extract",
+      "deepseek_fim",
+      "deepseek_cost_report",
+      "deepseek_genesis"
+    ]
+  },
+  "toolMetadata": {
+    "deepseek_research": {
+      "authSignals": [
+        {
+          "provider": "deepseek"
+        },
+        {
+          "provider": "openclaw-deepseek"
+        }
+      ]
+    },
+    "deepseek_reason": {
+      "authSignals": [
+        {
+          "provider": "deepseek"
+        },
+        {
+          "provider": "openclaw-deepseek"
+        }
+      ]
+    },
+    "deepseek_balance": {
+      "authSignals": [
+        {
+          "provider": "deepseek"
+        },
+        {
+          "provider": "openclaw-deepseek"
+        }
+      ]
+    },
+    "deepseek_cascade": {
+      "authSignals": [
+        {
+          "provider": "deepseek"
+        },
+        {
+          "provider": "openclaw-deepseek"
+        }
+      ]
+    },
+    "deepseek_extract": {
+      "authSignals": [
+        {
+          "provider": "deepseek"
+        },
+        {
+          "provider": "openclaw-deepseek"
+        }
+      ]
+    },
+    "deepseek_fim": {
+      "authSignals": [
+        {
+          "provider": "deepseek"
+        },
+        {
+          "provider": "openclaw-deepseek"
+        }
+      ]
+    },
+    "deepseek_cost_report": {
+      "authSignals": [
+        {
+          "provider": "deepseek"
+        },
+        {
+          "provider": "openclaw-deepseek"
+        }
+      ]
+    },
+    "deepseek_genesis": {
+      "authSignals": [
+        {
+          "provider": "deepseek"
+        },
+        {
+          "provider": "openclaw-deepseek"
+        }
+      ]
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "baseUrl": {
+        "type": "string",
+        "description": "DeepSeek API base URL. Default https://api.deepseek.com"
+      },
+      "model": {
+        "type": "string",
+        "description": "Primary model for the harness loop and tools. Default deepseek-flash"
+      },
+      "defaultReasoningEffort": {
+        "type": "string",
+        "enum": [
+          "none",
+          "low",
+          "high",
+          "max"
+        ],
+        "description": "Default thinking effort. Default high"
+      },
+      "researchMaxSteps": {
+        "type": "number",
+        "description": "Maximum agent-loop iterations. Default 8"
+      },
+      "researchMaxTokensPerStep": {
+        "type": "number",
+        "description": "Max output tokens per loop iteration. Default 16384"
+      },
+      "requestTimeoutMs": {
+        "type": "number",
+        "description": "Per-request timeout for DeepSeek API calls. Default 180000"
+      },
+      "fimModel": {
+        "type": "string",
+        "description": "Model for FIM code completion. Default deepseek-flash"
+      },
+      "dailyBudgetUsd": {
+        "type": "number",
+        "description": "Daily USD budget for the live cost dashboard; warnings fire when exceeded"
+      },
+      "judgeThreshold": {
+        "type": "number",
+        "description": "Cascade judge escalation threshold: escalate when grade=escalate OR confidence below this (0-1, 0 = grade-driven only)"
+      }
+    }
+  },
+  "uiHints": {
+    "baseUrl": {
+      "label": "Base URL",
+      "placeholder": "https://api.deepseek.com"
+    },
+    "model": {
+      "label": "Model",
+      "placeholder": "deepseek-flash"
+    }
+  }
+}
