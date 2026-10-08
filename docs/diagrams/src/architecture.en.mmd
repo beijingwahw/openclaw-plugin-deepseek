@@ -1,0 +1,42 @@
+flowchart TB
+ subgraph Entry
+ M[openclaw.plugin.json<br/>manifest: providers + harness + 8 tool contracts]
+ I[index.ts<br/>definePluginEntry: wiring only]
+ end
+
+ subgraph Transport
+ API[src/deepseek-api.ts<br/>SSE parser · retries · timeouts]
+ ANT[src/anthropic.ts<br/>Claude-protocol transport]
+ VAL[src/validate.ts<br/>runtime boundary validators]
+ end
+
+ subgraph Loop["Agent Loop"]
+ HAR[src/harness.ts]
+ LO[src/loop.ts<br/>function-calling loop]
+ MEM[src/memory.ts<br/>transcript → history]
+ end
+
+ subgraph Cascade
+ UC[src/universal-cascade.ts<br/>any-provider engine]
+ CA[src/cascade.ts<br/>thin facade]
+ POL[src/policy.ts<br/>adaptive routing]
+ end
+
+ subgraph Governance
+ LED[src/ledger.ts<br/>cost ledger]
+ PRI[src/pricing.ts · cost.ts]
+ GUA[src/guardian.ts<br/>budget state machine]
+ AUD[src/audit.ts<br/>decision trail]
+ CON[src/concurrency.ts<br/>AIMD governor]
+ CAC[src/cache.ts<br/>deterministic cache]
+ end
+
+ subgraph Tools
+ TO[src/tools.ts<br/>8 agent tools]
+ EX[src/extract.ts · fim.ts]
+ end
+
+ I --> Transport & Loop & Cascade & Governance & Tools
+ Cascade --> Governance
+ Loop --> Transport
+ Tools --> Cascade & Governance

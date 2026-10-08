@@ -1,0 +1,42 @@
+flowchart TB
+ subgraph Entry["入口"]
+ M[openclaw.plugin.json<br/>清单：providers + harness + 8 个工具契约]
+ I[index.ts<br/>definePluginEntry：只做装配]
+ end
+
+ subgraph Transport["传输层"]
+ API[src/deepseek-api.ts<br/>SSE 解析 · 重试 · 超时]
+ ANT[src/anthropic.ts<br/>Claude 协议转发]
+ VAL[src/validate.ts<br/>运行时边界校验]
+ end
+
+ subgraph Loop["Agent 循环"]
+ HAR[src/harness.ts]
+ LO[src/loop.ts<br/>函数调用循环]
+ MEM[src/memory.ts<br/>会话记录 → 消息历史]
+ end
+
+ subgraph Cascade["级联"]
+ UC[src/universal-cascade.ts<br/>任意 Provider 引擎]
+ CA[src/cascade.ts<br/>薄门面]
+ POL[src/policy.ts<br/>自适应路由]
+ end
+
+ subgraph Governance["治理层"]
+ LED[src/ledger.ts<br/>成本账本]
+ PRI[src/pricing.ts · cost.ts]
+ GUA[src/guardian.ts<br/>预算状态机]
+ AUD[src/audit.ts<br/>决策审计]
+ CON[src/concurrency.ts<br/>AIMD 并发控制]
+ CAC[src/cache.ts<br/>确定性缓存]
+ end
+
+ subgraph Tools["工具"]
+ TO[src/tools.ts<br/>8 个 agent 工具]
+ EX[src/extract.ts · fim.ts]
+ end
+
+ I --> Transport & Loop & Cascade & Governance & Tools
+ Cascade --> Governance
+ Loop --> Transport
+ Tools --> Cascade & Governance

@@ -1,0 +1,26 @@
+sequenceDiagram
+ autonumber
+ participant U as User Turn
+ participant L as Agent Loop
+ participant DS as DeepSeek API
+ participant TL as Tool Runtime
+
+ U->>L: prompt + tools + budget
+ loop until final answer (max steps)
+ L->>L: context budget check<br/>(compact oldest tool results if > ~450K tokens)
+ L->>DS: stream chat (thinking, tool_choice=auto,<br/>include_usage, user_id)
+ DS-->>L: reasoning_content deltas
+ DS-->>L: content deltas
+ DS-->>L: tool_calls + usage frame
+ alt no tool calls
+ L-->>U: final answer
+ else tool calls present
+ L->>L: stuck-loop circuit breaker<br/>(same call 3× → stop)
+ L->>L: replay assistant turn<br/>WITH reasoning_content
+ par parallel tools (cap 4)
+ L->>TL: execute calls
+ TL-->>L: results (in call order)
+ end
+ L->>DS: tool results appended
+ end
+ end

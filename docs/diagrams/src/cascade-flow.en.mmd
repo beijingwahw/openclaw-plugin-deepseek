@@ -1,0 +1,25 @@
+flowchart TD
+ Q[Task] --> G{ Budget Guardian}
+
+ G -->|green: under 50%| N[normal routing]
+ G -->|amber: 50%+| E[economize:<br/>lean on fast paths]
+ G -->|red: 90%+| X[ emergency:<br/>cheapest tier only, no judge]
+
+ N & E --> P{ Adaptive Policy<br/>per task-shape acceptance rates}
+ P -->|acceptance 85%+ over 6 samples| FJ[fast path:<br/>skip judge ]
+ P -->|acceptance under 30% over 10 samples| DS2[direct-strong:<br/>skip weak tier ]
+ P -->|insufficient evidence| J[normal draft + judge]
+
+ FJ -.->|every 4th run: audit judge call<br/>explore vs exploit| J
+
+ J --> T1[ Tier 1 draft<br/>reasoning: low]
+ T1 --> JD{ Judge<br/>GRADE · CONFIDENCE · REASON}
+ JD -->|accept| A[ ship tier-1 answer<br/>tier-1 price]
+ JD -->|escalate or low confidence| T2[ Tier 2+ redo<br/>reasoning: max]
+ T2 --> B[ ship flagship answer<br/>flagship quality]
+ DS2 --> T2
+ X --> T1
+
+ style A fill:#1a7f37,color:#fff
+ style B fill:#8250df,color:#fff
+ style X fill:#cf222e,color:#fff

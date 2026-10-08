@@ -1,0 +1,24 @@
+flowchart LR
+ subgraph Gateway
+ M1[deepseek-flash] --> HOOK
+ M2[claude-sonnet] --> HOOK
+ M3[glm-5.3] --> HOOK
+ HOOK{{llm_output hook}}
+ end
+
+ HOOK --> L[( Cost Ledger<br/>1000-entry ring buffer<br/>30-day retention<br/>atomic snapshots)]
+
+ subgraph Pricing
+ P1[DeepSeek exact<br/>peak / off-peak<br/>cache-hit aware]
+ P2[LiteLLM catalog<br/>~all vendors<br/>TTL-cached, offline-safe]
+ P3[unpriced fallback<br/>tokens tracked, cost = null]
+ end
+
+ L --> P1 & P2 & P3
+ P1 & P2 & P3 --> R[deepseek_cost_report]
+ R --> V1[view: live<br/>per model / session / day]
+ R --> V2[view: pricing]
+ R --> V3[view: estimate]
+ R --> V4[view: credits<br/>balance + billing]
+ L --> F[ burn-rate forecast<br/>EOD projection + red-crossing time]
+ F --> G2[Budget Guardian]

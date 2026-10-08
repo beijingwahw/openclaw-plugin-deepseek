@@ -1,0 +1,24 @@
+flowchart LR
+ subgraph GW["OpenClaw Gateway"]
+ A[Agent Turn] -->|/model openclaw-deepseek/*| H
+ end
+
+ subgraph Plugin["openclaw-deepseek plugin"]
+ H[ Native Agent Harness<br/>thinking · vision · tool loop]
+ C[ Universal Cascade<br/>draft → judge → escalate]
+ D[ Cost Dashboard<br/>ledger · guardian · audit]
+ T[ 8 Agent Tools]
+ end
+
+ subgraph Providers
+ DS[(DeepSeek API<br/>V4.1-Flash · V4-Pro)]
+ GLM[(GLM)]
+ CL[(Claude)]
+ GPT[(GPT)]
+ GEM[(Gemini)]
+ end
+
+ H --> DS
+ C --> DS & GLM & CL & GPT & GEM
+ T --> DS
+ D -.llm_output hook.- GW

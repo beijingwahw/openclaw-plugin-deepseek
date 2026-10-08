@@ -1,0 +1,12 @@
+stateDiagram-v2
+ [*] --> green : budget configured
+ [*] --> unconfigured : no dailyBudgetUsd
+ green --> amber : ≥ 50% of daily budget
+ amber --> red : ≥ 90%
+ red --> amber : new day
+ amber --> green : new day
+
+ green : normal operation
+ amber : economize — prefer judge-free fast paths
+ red : emergency — single cheapest tier, zero judge calls
+ unconfigured : normal operation

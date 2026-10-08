@@ -1,0 +1,26 @@
+sequenceDiagram
+ autonumber
+ participant U as 用户回合
+ participant L as Agent 循环
+ participant DS as DeepSeek API
+ participant TL as 工具运行时
+
+ U->>L: prompt + 工具 + 步数预算
+ loop 直到产出最终答案（受步数预算约束）
+ L->>L: 上下文预算检查<br/>（超过约 45 万 token 时压缩最老的工具结果）
+ L->>DS: 流式对话（thinking、tool_choice=auto、<br/>include_usage、user_id）
+ DS-->>L: reasoning_content 增量
+ DS-->>L: content 增量
+ DS-->>L: tool_calls + usage 帧
+ alt 没有工具调用
+ L-->>U: 最终答案
+ else 存在工具调用
+ L->>L: 死循环熔断器<br/>（同一调用连续 3 次 → 停止）
+ L->>L: 回放 assistant 回合<br/>【携带 reasoning_content】
+ par 并行工具（上限 4）
+ L->>TL: 执行调用
+ TL-->>L: 结果（按调用顺序回填）
+ end
+ L->>DS: 追加工具结果
+ end
+ end

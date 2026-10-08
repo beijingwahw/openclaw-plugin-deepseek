@@ -1,0 +1,24 @@
+flowchart LR
+ subgraph GW2["网关"]
+ M1[deepseek-flash] --> HOOK
+ M2[claude-sonnet] --> HOOK
+ M3[glm-5.3] --> HOOK
+ HOOK{{llm_output 钩子}}
+ end
+
+ HOOK --> L[( 成本账本<br/>1000 条环形缓冲<br/>30 天保留<br/>原子快照)]
+
+ subgraph Pricing["定价"]
+ P1[DeepSeek 精确计费<br/>峰 / 谷时段<br/>缓存命中感知]
+ P2[LiteLLM 价格目录<br/>覆盖几乎全部厂商<br/>TTL 缓存，离线可用]
+ P3[未定价兜底<br/>只记 token，cost = null]
+ end
+
+ L --> P1 & P2 & P3
+ P1 & P2 & P3 --> R[deepseek_cost_report]
+ R --> V1[view: live<br/>按模型 / 会话 / 天]
+ R --> V2[view: pricing<br/>单价目录]
+ R --> V3[view: estimate<br/>试算]
+ R --> V4[view: credits<br/>余额 + 账单]
+ L --> F[ 燃烧率预测<br/>EOD 外推 + 红线时刻]
+ F --> G2[预算守护器]

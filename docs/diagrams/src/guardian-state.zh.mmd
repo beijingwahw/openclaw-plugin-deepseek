@@ -1,0 +1,12 @@
+stateDiagram-v2
+ [*] --> green : 已配置预算
+ [*] --> unconfigured : 未配置 dailyBudgetUsd
+ green --> amber : 达到日预算 50%
+ amber --> red : 达到 90%
+ red --> amber : 新的一天
+ amber --> green : 新的一天
+
+ green : 正常运行
+ amber : 节约模式——倾向免 judge 的快速路
+ red : 紧急模式——只留最便宜单层，零 judge 调用
+ unconfigured : 正常运行

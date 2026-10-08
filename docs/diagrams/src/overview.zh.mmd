@@ -1,0 +1,24 @@
+flowchart LR
+ subgraph GW["OpenClaw 网关"]
+ A[Agent 回合] -->|/model openclaw-deepseek/*| H
+ end
+
+ subgraph Plugin["openclaw-deepseek 插件"]
+ H[ 原生 Agent Harness<br/>思考控制 · 视觉 · 工具循环]
+ C[ 通用级联<br/>起草 → 评判 → 升级]
+ D[ 成本看板<br/>账本 · 守护 · 审计]
+ T[ 8 个 Agent 工具]
+ end
+
+ subgraph Providers["模型服务商"]
+ DS[(DeepSeek API<br/>V4.1-Flash · V4-Pro)]
+ GLM[(GLM)]
+ CL[(Claude)]
+ GPT[(GPT)]
+ GEM[(Gemini)]
+ end
+
+ H --> DS
+ C --> DS & GLM & CL & GPT & GEM
+ T --> DS
+ D -.llm_output 钩子.- GW

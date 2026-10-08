@@ -1,0 +1,25 @@
+flowchart TD
+ Q[任务] --> G{ 预算守护}
+
+ G -->|绿灯：低于 50%| N[正常路由]
+ G -->|黄灯：50%+| E[节约模式：<br/>倾向省钱快速路]
+ G -->|红灯：90%+| X[ 紧急模式：<br/>只留最便宜单层，不调 judge]
+
+ N & E --> P{ 自适应策略<br/>按任务形态的接受率}
+ P -->|接受率 85%+，满 6 个样本| FJ[快速路：<br/>跳过 judge ]
+ P -->|接受率不足 30%，满 10 个样本| DS2[直走强模型：<br/>跳过弱层 ]
+ P -->|证据不足| J[正常 draft + judge]
+
+ FJ -.->|每第 4 次：强制审计 judge 调用<br/>探索 vs 利用| J
+
+ J --> T1[ 第一层起草<br/>reasoning: low]
+ T1 --> JD{ 评判<br/>GRADE · CONFIDENCE · REASON}
+ JD -->|接受| A[ 交付第一层答案<br/>第一层的价格]
+ JD -->|升级或置信度过低| T2[ 第二层以上重做<br/>reasoning: max]
+ T2 --> B[ 交付旗舰答案<br/>旗舰级质量]
+ DS2 --> T2
+ X --> T1
+
+ style A fill:#1a7f37,color:#fff
+ style B fill:#8250df,color:#fff
+ style X fill:#cf222e,color:#fff
